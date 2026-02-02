@@ -1,0 +1,16 @@
+{
+  "name": "job-management",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "Satish Kumar Vishwakarma",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
