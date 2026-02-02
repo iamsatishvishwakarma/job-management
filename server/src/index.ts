@@ -1,8 +1,9 @@
-import app from './app';
+import config from '@/configs/app.config'
+import app from '@/app';
 import http from 'http';
 
 const server = http.createServer(app);
 
-server.listen(3000, () => {
-  console.log(`Server started on port ${3000}`);
+server.listen(config.PORT, () => {
+  console.log(`Server started on port ${config.PORT}`);
 });
