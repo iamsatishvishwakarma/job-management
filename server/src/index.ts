@@ -1,9 +1,38 @@
 import config from '@/configs/app.config'
 import app from '@/app';
 import http from 'http';
+import logger from '@/utils/logger';
+import databaseServices from '@/services/database-services';
 
 const server = http.createServer(app);
 
-server.listen(config.PORT, () => {
-  console.log(`Server started on port ${config.PORT}`);
-});
+
+server.listen(config.PORT);
+(async () => {
+  try {
+    // Database Connection
+    const connection = await databaseServices.connect()
+    logger.info(`DATABASE_CONNECTION`, {
+      meta: {
+        CONNECTION_NAME: connection.name
+      }
+    })
+
+    logger.info(`APPLICATION_STARTED`, {
+      meta: {
+        PORT: config.PORT,
+        SERVER_URL: config.SERVER_URL
+      }
+    })
+  } catch (err) {
+    logger.error(`APPLICATION_ERROR`, { meta: err })
+
+    server.close((error) => {
+      if (error) {
+        logger.error(`APPLICATION_ERROR`, { meta: error })
+      }
+
+      process.exit(1)
+    })
+  }
+})()
