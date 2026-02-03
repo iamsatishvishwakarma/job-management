@@ -3,14 +3,20 @@ import helmet from 'helmet';
 import bodyParser from 'body-parser';
 import responseMessage from '@/constants/response.message.constant';
 import httpError from '@/utils/httpError';
+import cors from '@/configs/cors.config';
 import globalErrorHandlerMiddleware from '@/middlewares/global.error.handler.middleware';
+import router from '@/routes';
 
 const app = express();
 
+app.use(cors);
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Route
+app.use('/api', router);
 
 // 404 Handler
 app.use((req: Request, _: Response, next: NextFunction) => {

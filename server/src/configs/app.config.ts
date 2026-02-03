@@ -8,6 +8,7 @@ export default {
   NODE_ENV: process.env.NODE_ENV,
   PORT: process.env.PORT,
   SERVER_URL: process.env.SERVER_URL,
+   ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS,
   // Database
   DATABASE_URL: process.env.DATABASE_URL,
 }
