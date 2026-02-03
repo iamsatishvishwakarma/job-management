@@ -1,6 +1,6 @@
 import type { LoginRequestType, LoginResponseType } from "@/types/auth"
 
-import { coreBaseApi } from "../api/core.base.api"
+import { coreBaseApi } from "@/features/api/core.base.api"
 
 export const authApi = coreBaseApi.injectEndpoints({
   endpoints: (builder) => ({

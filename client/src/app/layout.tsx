@@ -1,43 +1,25 @@
-"use client";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
-import { Provider } from "react-redux"
-import { PersistGate } from "redux-persist/integration/react"
+import { Inter } from "next/font/google"
+import "./globals.css"
+import MainProvider from "@/components/shared/main.provider"
 
-import { ToastProvider } from "@/components/ui/context/providers/toast.provider"
-import { persistor, store } from "@/store"
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  variable: "--font-inter",
+  display: "swap",
+})
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <AppRouterCacheProvider>
-          <Provider store={store}>
-            <PersistGate loading={null} persistor={persistor}>
-              <ToastProvider>
-                {children}
-              </ToastProvider>
-            </PersistGate>
-          </Provider>
-        </AppRouterCacheProvider>
+      <body className={`${inter.variable} antialiased`}>
+        <MainProvider>
+          {children}
+        </MainProvider>
       </body>
     </html>
-  );
+  )
 }
