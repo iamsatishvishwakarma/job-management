@@ -1,76 +1,77 @@
-import util from 'util'
-import 'winston-mongodb'
-import { createLogger, format, transports } from 'winston'
-import { ConsoleTransportInstance, FileTransportInstance } from 'winston/lib/winston/transports'
-import config from "@/configs/app.config"
-import { EApplicationEnvironment } from '@/constants/application.constant'
-import path from 'node:path'
-import { red, blue, yellow, green, magenta } from 'colorette'
-import * as sourceMapSupport from 'source-map-support'
-import { MongoDBTransportInstance } from 'winston-mongodb'
-import { LOGS_DIR } from '@/utils/path'
+import { red, blue, yellow, green, magenta } from "colorette";
+import "winston-mongodb";
+import path from "node:path";
+import * as sourceMapSupport from "source-map-support";
+import util from "util";
+import { createLogger, format, transports } from "winston";
+import { MongoDBTransportInstance } from "winston-mongodb";
+import { ConsoleTransportInstance, FileTransportInstance } from "winston/lib/winston/transports";
+
+import config from "@/configs/app.config";
+import { EApplicationEnvironment } from "@/constants/application.constant";
+import { LOGS_DIR } from "@/utils/path";
 
 // Linking Trace Support
-sourceMapSupport.install()
+sourceMapSupport.install();
 
 const colorizeLevel = (level: string) => {
   switch (level) {
-    case 'ERROR':
-      return red(level)
-    case 'INFO':
-      return blue(level)
-    case 'WARN':
-      return yellow(level)
+    case "ERROR":
+      return red(level);
+    case "INFO":
+      return blue(level);
+    case "WARN":
+      return yellow(level);
     default:
-      return level
+      return level;
   }
-}
+};
 
 const consoleLogFormat = format.printf((info) => {
-  const { level, message, timestamp, meta = {} } = info
+  const { level, message, timestamp, meta = {} } = info;
 
-  const customLevel = colorizeLevel(level.toUpperCase())
-  const customTimestamp = green(timestamp as string)
-  const customMessage = message
+  const customLevel = colorizeLevel(level.toUpperCase());
+  const customTimestamp = green(timestamp as string);
+  const customMessage = message;
 
   const customMeta = util.inspect(meta, {
     showHidden: false,
     depth: null,
-    colors: true
-  })
+    colors: true,
+  });
 
-  const customLog = `${customLevel} [${customTimestamp}] ${customMessage}\n${magenta('META')} ${customMeta}\n`
+  const customLog = `${customLevel} [${customTimestamp}] ${customMessage}\n${magenta("META")} ${customMeta}\n`;
 
-  return customLog
-})
+  return customLog;
+});
 
-const consoleTransport = (): Array<ConsoleTransportInstance> => {
+const consoleTransport = (): ConsoleTransportInstance[] => {
   if (config.NODE_ENV === EApplicationEnvironment.DEVELOPMENT) {
     return [
       new transports.Console({
-        level: 'info',
-        format: format.combine(format.timestamp(), consoleLogFormat)
-      })
-    ]
+        level: "info",
+        format: format.combine(format.timestamp(), consoleLogFormat),
+      }),
+    ];
   }
 
-  return []
-}
+  return [];
+};
 
 const fileLogFormat = format.printf((info) => {
-  const { level, message, timestamp, meta = {} } = info
+  const { level, message, timestamp, meta = {} } = info;
 
-  const logMeta: Record<string, unknown> = {}
+  const logMeta: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(meta as Record<string, unknown>)) {
     if (value instanceof Error) {
       logMeta[key] = {
         name: value.name,
         message: value.message,
-        trace: value.stack || ''
-      }
+        trace: value.stack || "",
+      };
     } else {
-      logMeta[key] = value
+      logMeta[key] = value;
     }
   }
 
@@ -78,40 +79,40 @@ const fileLogFormat = format.printf((info) => {
     level: level.toUpperCase(),
     message,
     timestamp,
-    meta: logMeta
-  }
+    meta: logMeta,
+  };
 
-  return JSON.stringify(logData, null, 4)
-})
+  return JSON.stringify(logData, null, 4);
+});
 
-const FileTransport = (): Array<FileTransportInstance> => {
+const FileTransport = (): FileTransportInstance[] => {
   return [
     new transports.File({
       filename: path.join(LOGS_DIR, `${config.NODE_ENV}.log`),
-      level: 'info',
-      format: format.combine(format.timestamp(), fileLogFormat)
-    })
-  ]
-}
+      level: "info",
+      format: format.combine(format.timestamp(), fileLogFormat),
+    }),
+  ];
+};
 
-const MongodbTransport = (): Array<MongoDBTransportInstance> => {
+const MongodbTransport = (): MongoDBTransportInstance[] => {
   return [
     new transports.MongoDB({
-      level: 'info',
+      level: "info",
       db: config.DATABASE_URL as string,
-      metaKey: 'meta',
+      metaKey: "meta",
       expireAfterSeconds: 3600 * 24 * 30,
       options: {
-        useUnifiedTopology: true
+        useUnifiedTopology: true,
       },
-      collection: 'application-logs'
-    })
-  ]
-}
+      collection: "application-logs",
+    }),
+  ];
+};
 
 export default createLogger({
   defaultMeta: {
-    meta: {}
+    meta: {},
   },
-  transports: [...FileTransport(), ...MongodbTransport(), ...consoleTransport()]
-})
+  transports: [...FileTransport(), ...MongodbTransport(), ...consoleTransport()],
+});

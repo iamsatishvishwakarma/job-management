@@ -1,10 +1,12 @@
-import cors, { CorsOptions } from 'cors';
-import config from '@/configs/app.config';
-import { EApplicationEnvironment } from '@/constants/application.constant';
+import cors, { CorsOptions } from "cors";
 
-const allowedOrigins = config.NODE_ENV === EApplicationEnvironment.PRODUCTION
-  ? config.ALLOWED_ORIGINS?.split(',') // from .env as comma-separated list
-  : ['http://localhost:3000'];
+import config from "@/configs/app.config";
+import { EApplicationEnvironment } from "@/constants/application.constant";
+
+const allowedOrigins =
+  config.NODE_ENV === EApplicationEnvironment.PRODUCTION
+    ? config.ALLOWED_ORIGINS?.split(",") // from .env as comma-separated list
+    : ["http://localhost:3000"];
 
 const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
@@ -12,11 +14,11 @@ const corsOptions: CorsOptions = {
     if (!origin || allowedOrigins?.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ["GET", "POST", "PUT", "DELETE"],
 };
 
 export default cors(corsOptions);

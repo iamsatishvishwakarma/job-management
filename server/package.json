@@ -5,14 +5,15 @@
   "license": "ISC",
   "author": "Satish Kumar Vishwakarma",
   "type": "commonjs",
-  "main": "dist/index.js",
+  "main": "dist/server.js",
   "scripts": {
-    "start": "node -r tsconfig-paths/register dist/index.js",
-    "dev": "tsx src/index.ts",
+    "start": "node -r tsconfig-paths/register dist/server.js",
+    "dev": "tsx src/server.ts",
     "build": "tsc & tsc-alias"
   },
   "dependencies": {
     "@types/cors": "^2.8.19",
+    "@types/ws": "^8.18.1",
     "axios": "^1.13.4",
     "body-parser": "^2.2.2",
     "bullmq": "^5.67.2",
@@ -30,6 +31,7 @@
     "util": "^0.12.5",
     "winston": "^3.19.0",
     "winston-mongodb": "^7.0.1",
+    "ws": "^8.19.0",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
